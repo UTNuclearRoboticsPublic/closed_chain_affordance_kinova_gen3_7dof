@@ -1,0 +1,23 @@
+#########################################################
+# ROS-related attributes pertaining to kinova_gen3_7dof #
+#########################################################
+
+cc_affordance_planner_ros:
+  ros__parameters:
+    # --- Robot Name ---
+    cca_robot: "kinova_gen3_7dof" # This package must be named cca_<cca_robot>_description
+
+    # --- Action Servers - follow_joint_trajectory types---
+    cca_robot_as: "/joint_trajectory_controller/follow_joint_trajectory" # To execute robot trajectory on the robot
+
+    # --- Topics ---
+    cca_joint_states_topic: "/joint_states" # Joint states topic name
+
+    # --- Robot Description ---
+    cca_robot_description_parameter: "robot_description" # Robot description parameter name
+
+    # --- Planning Group ---
+    cca_planning_group: "manipulator" # MoveIt planning group name
+
+    # --- Rviz Fixed Frame ---
+    rviz_fixed_frame: "base_link" # Fixed frame for viewing in Rviz
