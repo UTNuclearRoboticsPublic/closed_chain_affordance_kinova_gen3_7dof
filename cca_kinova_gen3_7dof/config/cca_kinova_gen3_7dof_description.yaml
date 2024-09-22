@@ -3,7 +3,7 @@
 ref_frame:
   - name: base_link
 
-joints:
+robot_joints:
   - name: joint_1
     w: [0, 0, -1]
     q: [0, 0, 0.15643]
@@ -31,6 +31,9 @@ joints:
   - name: joint_7
     w: [0, 0, -1]
     q: [0, -0.0246, 1.1258]
+
+gripper_joint:
+  - name: robotiq_85_left_knuckle_joint
 
 tool:
   - name: manual_grasp_link # Tool frame name, example: arm0_tool0. This is usually at the center of the palm

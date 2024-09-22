@@ -1,0 +1,14 @@
+####################################################################################
+# ROS-related attributes pertaining to Kinova Gen3 7Dof robot for visualization of joint trajectories#
+####################################################################################
+
+cca_ros_viz:
+  ros__parameters:
+
+    joint_states_topic: "/joint_states" # Joint states topic name
+
+    planning_group: "manipulator" # MoveIt planning group name
+
+    ee_link: "robotiq_85_left_inner_knuckle_link" # End-effector link in the planning group
+
+    rviz_fixed_frame: "base_link" # Fixed frame for viewing in Rviz

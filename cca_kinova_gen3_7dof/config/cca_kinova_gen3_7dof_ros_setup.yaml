@@ -12,12 +12,3 @@ cc_affordance_planner_ros:
 
     # --- Topics ---
     cca_joint_states_topic: "/joint_states" # Joint states topic name
-
-    # --- Robot Description ---
-    cca_robot_description_parameter: "robot_description" # Robot description parameter name
-
-    # --- Planning Group ---
-    cca_planning_group: "manipulator" # MoveIt planning group name
-
-    # --- Rviz Fixed Frame ---
-    rviz_fixed_frame: "base_link" # Fixed frame for viewing in Rviz

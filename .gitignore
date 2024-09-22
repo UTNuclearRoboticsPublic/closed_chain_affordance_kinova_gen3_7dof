@@ -1,1 +1,2 @@
-.sw*
+#ignore swap files created by vim
+*.sw*
