@@ -30,21 +30,19 @@ This repository contains the `cca_kinova_gen3_7dof` package to implement the clo
 
 1. Run the kinova_gen3_7dof driver, or for mock hardware, run the following:
    ```
-   ros2 launch kinova_gen3_6dof_robotiq_2f_85_moveit_config robot.launch.py \
+   ros2 launch kinova_gen3_7dof_robotiq_2f_85_moveit_config robot.launch.py \
      robot_ip:=yyy.yyy.yyy.yyy \
      use_fake_hardware:=true
    ```
-2. Optional: If visualizing planned trajectories, `robot_description_semantic` must be loaded onto the parameter server. If the driver launcher does not take care of it, do it separately.
 
-
-3. Optional: Run the planning visualization server. Then, in RViz, add MarkerArray with publishing topic, `/rviz_visual_tools`.
+3. Optional but recommended: To visualize planned trajectories, run the planning visualization server.
    ```
-   ros2 run cca_ros_viz cca_ros_viz_node
+   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_viz.launch.py
    ```
 
 5. Run the closed-chain affordance planner node for Kinova:
    ```
-   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_launch.py
+   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof.launch.py
    ```
 
 ## Author
