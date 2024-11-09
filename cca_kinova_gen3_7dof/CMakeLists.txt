@@ -10,9 +10,6 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(cca_ros REQUIRED)
-find_package(geometry_msgs)
-find_package(tf2_ros)
-find_package(std_srvs)
 
 # Non-ROS packages
 find_package(Eigen3 REQUIRED)
