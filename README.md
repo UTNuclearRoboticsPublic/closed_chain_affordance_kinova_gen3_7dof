@@ -1,5 +1,3 @@
-## Author
-Janak Panthi aka Crasun Jans
 # Closed-Chain Affordance Planning for the Kinova Gen3 7DoF Arm using ROS2
 This repository contains the `cca_kinova_gen3_7dof` package, which implements the closed-chain affordance planning framework on the Kinova Gen3 7DoF arm.
 
