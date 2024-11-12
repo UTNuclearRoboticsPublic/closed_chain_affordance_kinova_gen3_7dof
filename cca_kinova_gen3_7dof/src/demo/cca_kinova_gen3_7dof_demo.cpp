@@ -198,14 +198,17 @@ std::pair<cc_affordance_planner::PlannerConfig, cc_affordance_planner::TaskDescr
         task_description = cc_affordance_planner::TaskDescription(cc_affordance_planner::PlanningType::APPROACH);
 
         // Affordance info
-        task_description.affordance_info.type = affordance_util::ScrewType::ROTATION;
-        task_description.affordance_info.axis = Eigen::Vector3d(1, 0, 0);
+        task_description.affordance_info.type = affordance_util::ScrewType::TRANSLATION;
+        task_description.affordance_info.axis = Eigen::Vector3d(0, 0, 1);
         task_description.affordance_info.location = Eigen::Vector3d::Zero();
+        task_description.trajectory_density = 5;
+        // task_description.vir_screw_order = affordance_util::VirtualScrewOrder::XYZ;
 
         // Goals
-        task_description.goal.affordance = M_PI / 2.0; // Set desired goal for the affordance
+        task_description.goal.affordance = 0.5; // Set desired goal for the affordance
         task_description.goal.grasp_pose = Eigen::Matrix4d::Identity();
         task_description.goal.grasp_pose.block<3, 1>(0, 3) = Eigen::Vector3d(-0.3, -0.3, 0.5);
+        task_description.force_correction = (Eigen::VectorXd(6) << 0.5, 0.0, 0, 0.0, 0.0, 0.0).finished();
         break;
 
         // Do a linear motion along the z axis while constraining the EE yaw to a desired value
@@ -292,10 +295,11 @@ int main(int argc, char **argv)
     std::vector<cc_affordance_planner::TaskDescription> task_descriptions;
     std::vector<cc_affordance_planner::PlannerConfig> planner_configs;
 
-    const std::vector<DemoMotion> demo_motions = {
-        DemoMotion::ROLL_FORWARD, DemoMotion::ROLL_BACKWARD, DemoMotion::PITCH_FORWARD, DemoMotion::PITCH_BACKWARD,
-        DemoMotion::YAW_FORWARD,  DemoMotion::YAW_BACKWARD,  DemoMotion::APPROACH,      DemoMotion::TRANSLATION,
-        DemoMotion::ROTATION,     DemoMotion::SCREW,         DemoMotion::CARTESIAN_GOAL};
+    // const std::vector<DemoMotion> demo_motions = {
+    //     DemoMotion::ROLL_FORWARD, DemoMotion::ROLL_BACKWARD, DemoMotion::PITCH_FORWARD, DemoMotion::PITCH_BACKWARD,
+    //     DemoMotion::YAW_FORWARD,  DemoMotion::YAW_BACKWARD,  DemoMotion::APPROACH,      DemoMotion::TRANSLATION,
+    //     DemoMotion::ROTATION,     DemoMotion::SCREW,         DemoMotion::CARTESIAN_GOAL};
+    const std::vector<DemoMotion> demo_motions = {DemoMotion::APPROACH};
 
     // Populate the planner config and task descriptions for these demo motions. See the get_demo_description function
     // above for specific task descriptions.
@@ -316,7 +320,8 @@ int main(int argc, char **argv)
     cca_ros::KinematicState start_config;
     start_config.robot = HOME_CONFIG;
 
-    if (node->run(planner_configs, task_descriptions, start_config)) ///<-- This is where the planner is called.
+    // if (node->run(planner_configs, task_descriptions, start_config)) ///<-- This is where the planner is called.
+    if (node->run(planner_configs, task_descriptions)) ///<-- This is where the planner is called.
     {
         RCLCPP_INFO(node->get_logger(), "Successfully called CCA action");
         node->block_until_trajectory_execution(); // Optionally, block until execution
