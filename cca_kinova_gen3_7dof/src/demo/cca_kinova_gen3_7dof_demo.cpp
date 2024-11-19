@@ -109,6 +109,26 @@ std::pair<cc_affordance_planner::PlannerConfig, cc_affordance_planner::TaskDescr
     cc_affordance_planner::PlannerConfig planner_config;
     cc_affordance_planner::TaskDescription task_description;
 
+    // Load robot configuration
+    const std::string robot_config_file_path = "/home/crasun/ws_ros2/src/closed_chain_affordance_kinova_gen3_7dof/"
+                                               "cca_kinova_gen3_7dof/config/cca_kinova_gen3_7dof_description.yaml";
+    Eigen::Matrix4d fk;
+    try
+    {
+        const affordance_util::RobotConfig &robotConfig = affordance_util::robot_builder(robot_config_file_path);
+        const Eigen::MatrixXd robot_slist_ = robotConfig.Slist; // Robot screw axes
+        const Eigen::Matrix4d M_ = robotConfig.M;               // Home configuration matrix
+        Eigen::VectorXd HOME_CONFIG =
+            (Eigen::VectorXd(7) << -3.05874e-06, 0.260055, 3.14312, -2.26992, 1.74023e-06, 0.959945, 1.57006)
+                .finished();
+        fk = affordance_util::FKinSpace(M_, robot_slist_, HOME_CONFIG);
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Exception while building robot configuration: " << e.what() << std::endl;
+    }
+
+    const Eigen::VectorXd force_correction_ee = (Eigen::VectorXd(6) << 0.0, 0.0, 0.0, 0.0, 0.0, 0.1).finished();
     // The following demo motions happen in order. Read the headline comment for each demo motion to understand what
     // that task does.
     switch (demo_motion)
@@ -201,14 +221,15 @@ std::pair<cc_affordance_planner::PlannerConfig, cc_affordance_planner::TaskDescr
         task_description.affordance_info.type = affordance_util::ScrewType::TRANSLATION;
         task_description.affordance_info.axis = Eigen::Vector3d(0, 0, 1);
         task_description.affordance_info.location = Eigen::Vector3d::Zero();
-        task_description.trajectory_density = 5;
+        task_description.trajectory_density = 2;
         // task_description.vir_screw_order = affordance_util::VirtualScrewOrder::XYZ;
 
         // Goals
-        task_description.goal.affordance = 0.5; // Set desired goal for the affordance
+        task_description.goal.affordance = 0.1; // Set desired goal for the affordance
         task_description.goal.grasp_pose = Eigen::Matrix4d::Identity();
         task_description.goal.grasp_pose.block<3, 1>(0, 3) = Eigen::Vector3d(-0.3, -0.3, 0.5);
-        task_description.force_correction = (Eigen::VectorXd(6) << 0.5, 0.0, 0, 0.0, 0.0, 0.0).finished();
+
+        task_description.force_correction = affordance_util::Adjoint(fk) * force_correction_ee;
         break;
 
         // Do a linear motion along the z axis while constraining the EE yaw to a desired value
@@ -320,8 +341,8 @@ int main(int argc, char **argv)
     cca_ros::KinematicState start_config;
     start_config.robot = HOME_CONFIG;
 
-    // if (node->run(planner_configs, task_descriptions, start_config)) ///<-- This is where the planner is called.
-    if (node->run(planner_configs, task_descriptions)) ///<-- This is where the planner is called.
+    if (node->run(planner_configs, task_descriptions, start_config)) ///<-- This is where the planner is called.
+    // if (node->run(planner_configs, task_descriptions)) ///<-- This is where the planner is called.
     {
         RCLCPP_INFO(node->get_logger(), "Successfully called CCA action");
         node->block_until_trajectory_execution(); // Optionally, block until execution
