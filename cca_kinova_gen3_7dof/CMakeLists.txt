@@ -19,14 +19,17 @@ find_package(cc_affordance_planner REQUIRED)
 # Specify the node executables
 add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
 add_executable(${PROJECT_NAME}_demo src/demo/${PROJECT_NAME}_demo.cpp)
+add_executable(${PROJECT_NAME}_force_node src/${PROJECT_NAME}_force_node.cpp)
 
 # Specify ROS dependencies for the target
 ament_target_dependencies(${PROJECT_NAME}_node rclcpp cca_ros)
 ament_target_dependencies(${PROJECT_NAME}_demo rclcpp cca_ros)
+ament_target_dependencies(${PROJECT_NAME}_force_node rclcpp cca_ros)
 
 # Link Eigen libraries against this project library
 target_link_libraries(${PROJECT_NAME}_node affordance_util::affordance_util cc_affordance_planner::cc_affordance_planner Eigen3::Eigen)
 target_link_libraries(${PROJECT_NAME}_demo affordance_util::affordance_util cc_affordance_planner::cc_affordance_planner Eigen3::Eigen)
+target_link_libraries(${PROJECT_NAME}_force_node affordance_util::affordance_util cc_affordance_planner::cc_affordance_planner Eigen3::Eigen)
 
 install(TARGETS
   ${PROJECT_NAME}_node
