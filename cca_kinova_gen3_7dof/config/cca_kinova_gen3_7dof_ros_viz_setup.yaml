@@ -1,14 +1,13 @@
-####################################################################################
-# ROS-related attributes pertaining to Kinova Gen3 7Dof robot for visualization of joint trajectories#
-####################################################################################
+# *** ROS-related attributes pertaining to kinova_gen3_7dof for visualization of joint trajectories*** #
 
-cca_ros_viz:
+/**: # to enable parameter usage across different nodes
   ros__parameters:
 
     joint_states_topic: "/joint_states" # Joint states topic name
 
     planning_group: "manipulator" # MoveIt planning group name
 
-    ee_link: "robotiq_85_left_inner_knuckle_link" # End-effector link in the planning group
+    ref_frame: "base_link" # Default frame where the CCA planning plugin will show the screw interactive marker
+    tool_frame: "manual_grasp_link " # Frame that follows the screw path for planning purposes
 
-    rviz_fixed_frame: "base_link" # Fixed frame for viewing in Rviz
+    rviz_fixed_frame: "base_link" # Base frame from the urdf

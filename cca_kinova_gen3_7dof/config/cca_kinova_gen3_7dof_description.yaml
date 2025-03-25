@@ -1,5 +1,6 @@
-# Provide the reference frame, joint axes, their location, and the location of the tool
-# The following info is for the Kinova Gen3 7DoF robot arm
+# **Description of the kinova_gen3_7dof robot
+# Define the reference frame, joint axes, their locations, and the tool's position.
+# Add or remove joint fields as needed to accurately represent the robot
 ref_frame:
   - name: base_link
 
@@ -36,5 +37,5 @@ gripper_joint:
   - name: robotiq_85_left_knuckle_joint
 
 tool:
-  - name: manual_grasp_link # Tool frame name, example: arm0_tool0. This is usually at the center of the palm
-    q: [0, -0.0246, 1.381] # Tool frame location, example: [0.9383, 0.0005, 0.0664]
+  - name: manual_grasp_link # This is usually at the center of the palm
+    q: [0, -0.0246, 1.381]

@@ -1,14 +1,3 @@
-/*************************************/
-// Author: Crasun Jans
-// Description:
-// This node enables users to plan, visualize, and execute robot joint trajectories for specified tasks. The planning
-// process utilizes the Closed-chain Affordance model, as described in the paper:
-// "A closed-chain approach to generating affordance joint trajectories for robotic manipulators."
-//
-// Usage Instructions:
-// 1. The framework requires only two inputs: planner configuration and task description. See repo README.md Task
-// Examples section for task-description examples.
-/*************************************/
 #include "rclcpp/rclcpp.hpp"
 #include <Eigen/Core>
 #include <affordance_util/affordance_util.hpp>
@@ -17,35 +6,27 @@
 #include <cca_ros/cca_ros.hpp>
 #include <chrono>
 
-class CcaKinova : public cca_ros::CcaRos
+class CcaRobot : public cca_ros::CcaRos
 {
   public:
-    explicit CcaKinova(const std::string &node_name, const rclcpp::NodeOptions &node_options, bool visualize_trajectory,
-                       bool execute_trajectory)
-        : cca_ros::CcaRos(node_name, node_options, visualize_trajectory, execute_trajectory)
+    explicit CcaRobot(const std::string &node_name, const rclcpp::NodeOptions &node_options)
+        : cca_ros::CcaRos(node_name, node_options)
     {
     }
 
     // Function to run the planner for a given task and/or execute that task on the robot
-    bool run(const cc_affordance_planner::PlannerConfig &planner_config,
-             const cc_affordance_planner::TaskDescription &task_description,
-             const cca_ros::KinematicState &start_config = cca_ros::KinematicState())
+    bool run(const cca_ros::PlanningRequest &planning_request)
     {
-        includes_gripper_goal_ = !std::isnan(task_description.goal.gripper);
-        motion_status_ = std::make_shared<cca_ros::Status>(cca_ros::Status::UNKNOWN);
+        motion_status_ = planning_request.status;
 
-        return this->run_cc_affordance_planner(planner_config, task_description, motion_status_, start_config);
+        return this->plan_visualize_and_execute(planning_request);
     }
-
     // Function overload to plan multiple tasks at once
-    bool run(const std::vector<cc_affordance_planner::PlannerConfig> &planner_configs,
-             const std::vector<cc_affordance_planner::TaskDescription> &task_descriptions,
-             const cca_ros::KinematicState &start_config = cca_ros::KinematicState())
+    bool run(const cca_ros::PlanningRequests &planning_requests)
     {
-        includes_gripper_goal_ = !std::isnan(task_descriptions[0].goal.gripper);
-        motion_status_ = std::make_shared<cca_ros::Status>(cca_ros::Status::UNKNOWN);
+        motion_status_ = planning_requests.status;
 
-        return this->run_cc_affordance_planner(planner_configs, task_descriptions, motion_status_, start_config);
+        return this->plan_visualize_and_execute(planning_requests);
     }
 
     // Function to block until the robot completes the planned trajectory
@@ -73,11 +54,6 @@ class CcaKinova : public cca_ros::CcaRos
             }
             loop_rate.sleep();
         }
-        if (includes_gripper_goal_)
-        {
-            // Perform any necessary cleanup
-            this->cleanup_between_calls();
-        }
     }
 
   private:
@@ -90,9 +66,8 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
     rclcpp::NodeOptions node_options;
     node_options.automatically_declare_parameters_from_overrides(true);
-    auto node = std::make_shared<CcaKinova>(
-        "cca_ros", node_options, true,
-        false); ///<-- Flip this false keyword to true to execute the trajectory on the robot
+    auto node = std::make_shared<CcaRobot>("cca_ros", node_options);
+
     RCLCPP_INFO(node->get_logger(), "CCA Planner is active");
 
     // Spin the node so joint states can be read
@@ -104,21 +79,23 @@ int main(int argc, char **argv)
     /// cartesian goal, ee orientation jog, etc. It is also possible to plan multiple of these tasks together as a long
     /// joint trajectory.
     ///------------------------------------------------------------------///
-    cc_affordance_planner::TaskDescription task_description;
+    cca_ros::PlanningRequest req;
+
+    // Specify planning type
+    req.task_description = cc_affordance_planner::TaskDescription(cc_affordance_planner::PlanningType::AFFORDANCE);
 
     // Affordance info
-    task_description.affordance_info.type = affordance_util::ScrewType::TRANSLATION;
-    task_description.affordance_info.axis = Eigen::Vector3d(0, 0, 1);
-    task_description.affordance_info.location = Eigen::Vector3d::Zero();
+    req.task_description.affordance_info.type = affordance_util::ScrewType::TRANSLATION;
+    req.task_description.affordance_info.axis = Eigen::Vector3d(0, 0, 1);
+    req.task_description.affordance_info.location = Eigen::Vector3d::Zero();
 
     // Goals
-    task_description.goal.affordance = 0.5; // Set desired goal for the affordance
+    req.task_description.goal.affordance = 0.1; // Set desired goal for the affordance
 
-    cc_affordance_planner::PlannerConfig planner_config;
     ///------------------------------------------------------------------///
 
     // Run CCA planner and executor
-    if (node->run(planner_config, task_description))
+    if (node->run(req))
     {
         RCLCPP_INFO(node->get_logger(), "Successfully called CCA action");
         node->block_until_trajectory_execution(); // Optionally, block until execution
