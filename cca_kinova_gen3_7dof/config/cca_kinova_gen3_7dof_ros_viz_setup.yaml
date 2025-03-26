@@ -8,6 +8,11 @@
     planning_group: "manipulator" # MoveIt planning group name
 
     ref_frame: "base_link" # Default frame where the CCA planning plugin will show the screw interactive marker
-    tool_frame: "manual_grasp_link " # Frame that follows the screw path for planning purposes
+
+    ee_frame: "end_effector_link" # End-effector frame
+
+    tool_frame: "cca_tool_frame" # End-effector frame
+
+    ee_to_tool_offset: [0.0, 0.0, 0.112] # Location of the tool in the EE frame
 
     rviz_fixed_frame: "base_link" # Base frame from the urdf
