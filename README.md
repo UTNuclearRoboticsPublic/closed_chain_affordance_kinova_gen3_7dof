@@ -1,79 +1,84 @@
-# Closed-Chain Affordance Planning for the Kinova Gen3 7DoF Arm using ROS2
-This repository contains the `cca_kinova_gen3_7dof` package, which implements the closed-chain affordance planning framework on the Kinova Gen3 7DoF arm.
+# Closed-Chain Affordance Planning for Kinova Gen3 7DoF Arm
+
+## Overview
+
+The `cca_kinova_gen3_7dof` package implements the Closed-Chain Affordance (CCA) planning framework for the Kinova Gen3 7DoF robotic arm using ROS2. This package provides comprehensive tools for joint trajectory planning, visualization, and execution.
 
 ## Dependencies
 
-- **Required**: Robot Description for visualization purposes.
-- **Recommended**: Robot driver for testing on a real or simulated robot.
+Before installation, ensure you have the following dependencies:
 
-All dependencies can be installed from the official Kinova repository [here](https://github.com/Kinovarobotics/ros2_kortex).
+- [CCA Libraries](https://github.com/UTNuclearRoboticsPublic/closed_chain_affordance.git)
+- [CCA ROS Interface](https://github.com/UTNuclearRoboticsPublic/closed_chain_affordance_ros.git)
+- [ros2_kortex](https://github.com/Kinovarobotics/ros2_kortex): For robot description and optional simulator
 
-## Build and Install Instructions:
-1. Install the closed-chain affordance planning libraries by following instructions from the following repository:
-   [Link to instructions](https://github.com/UTNuclearRoboticsPublic/closed_chain_affordance_ros.git)
+## Installation
 
-2. Clone this repository onto your machine ROS2 workspace `src` folder:
-   ```
+1. Navigate to your ROS2 workspace and clone the repository:
+   ```bash
    cd ~/<ros2_ws_name>/src
-   ```
-   ```
    git clone -b main git@github.com:UTNuclearRoboticsPublic/closed_chain_affordance_kinova_gen3_7dof.git
    ```
 
-3. Build and source the `cca_kinova_gen3_7dof` package:
-   ```
+2. Build the package and source the workspace:
+   ```bash
    cd ~/<ros2_ws_name>
-   ```
-   ```
    colcon build --packages-select cca_kinova_gen3_7dof
-   ```
-   ```
    source install/setup.bash
    ```
 
-## Run Instructions:
+## Usage
 
-### Using with a Physical Robot
-To execute CCA-generated trajectories on a real Kinova Gen3 7DoF robot:
+### With Physical Robot
 
-1. Run the Kinova driver:
-   ```
+1. Launch the Kinova driver:
+   ```bash
    ros2 launch kinova_gen3_7dof_robotiq_2f_85_moveit_config robot.launch.py \
-     robot_ip:=yyy.yyy.yyy.yyy \
+     robot_ip:=yyy.yyy.yyy.yyy
    ```
-   Provide your particular robot's IP
+   *Replace `yyy.yyy.yyy.yyy` with your robot's actual IP address*
 
-2. Launch the CCA visualizer for Kinova:
-
-   ```
+2. Launch the CCA visualizer with interactive RVIZ plugin:
+   ```bash
    ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_viz.launch.py
    ```
+   *This launches both the visualizer and an interactive RVIZ plugin for code-free planning and execution*
 
-3. Launch the CCA planner/executor:
-   ```
+3. For programmatic task definition, launch the CCA planner which will plan for the tasks defined in `src/cca_kinova_gen3_7dof_node.cpp`:
+   ```bash
    ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof.launch.py
    ```
-### Using without a Physical Robot
-You can plan and visualize trajectories for the Kinova arm using the CCA framework without needing a physical robot. The following demonstration showcases various CCA framework features on the Kinova robot.
 
-1. Launch the CCA-visualizer for Kinova:
+### Without Physical Robot (Simulation)
 
-   ```
-   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_viz.launch.py
-   ```
-
-2. Launch the CCA planner demo node:
-   ```
-   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_demo.launch.py
-   ```
-
-You are encouraged to modify the tasks in the demo node to plan and visualize trajectories tailored to your specific applications. Task examples are also provided in the package README.md. If you want to test with fake hardware, you can run the following driver.
-
-   ```
+1. Launch the fake hardware simulator:
+   ```bash
    ros2 launch kinova_gen3_7dof_robotiq_2f_85_moveit_config robot.launch.py \
      robot_ip:=yyy.yyy.yyy.yyy \
      use_fake_hardware:=true
    ```
 
+2. Launch the CCA visualizer with interactive RVIZ plugin:
+   ```bash
+   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_viz.launch.py
+   ```
+   *This launches both the visualizer and an interactive RVIZ plugin for code-free planning and execution*
+
+3. Run the CCA planner demo which will plan for the tasks defined in `src/demo/cca_kinova_gen3_7dof_demo.cpp`:
+   ```bash
+   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_demo.launch.py
+   ```
+
+## Recommendations
+
+- Explore the interactive RVIZ plugin for code-free planning and execution
+- Modify demo node tasks to create custom trajectories
+- Refer to the package's `README.md` for additional task examples
+
 ## Author
-Janak Panthi aka Crasun Jans
+
+**Janak Panthi** (aka Crasun Jans)
+
+## Support
+
+For issues, feature requests, or contributions, please open an issue in the GitHub repository.
