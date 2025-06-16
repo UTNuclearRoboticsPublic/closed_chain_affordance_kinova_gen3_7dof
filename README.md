@@ -42,7 +42,10 @@ Before installation, ensure you have the following dependencies:
    ```bash
    ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_viz.launch.py
    ```
-   *This launches both the visualizer and an interactive RVIZ plugin for code-free planning and execution*
+   This launches both the visualizer and an interactive RVIZ plugin for code-free planning and execution. To plan and execute trajectories using the RViz plugin, start the following action server:
+   ```bash
+   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_action_server.launch.py
+   ```
 
 3. For programmatic task definition, launch the CCA planner which will plan for the tasks defined in `src/cca_kinova_gen3_7dof_node.cpp`:
    ```bash
@@ -62,7 +65,10 @@ Before installation, ensure you have the following dependencies:
    ```bash
    ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_viz.launch.py
    ```
-   *This launches both the visualizer and an interactive RVIZ plugin for code-free planning and execution*
+   This launches both the visualizer and an interactive RVIZ plugin for code-free planning and execution. To plan and execute trajectories using the RViz plugin, start the following action server:
+   ```bash
+   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_action_server.launch.py
+   ```
 
 3. Run the CCA planner demo which will plan for the tasks defined in `src/demo/cca_kinova_gen3_7dof_demo.cpp`:
    ```bash
