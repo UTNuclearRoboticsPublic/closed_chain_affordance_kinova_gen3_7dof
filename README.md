@@ -4,6 +4,11 @@
 
 The `cca_kinova_gen3_7dof` package implements the Closed-Chain Affordance (CCA) planning framework for the Kinova Gen3 7DoF robotic arm using ROS2. This package provides comprehensive tools for joint trajectory planning, visualization, and execution.
 
+## Requirements
+
+- `C++20`
+- `ROS Humble`
+
 ## Dependencies
 
 Before installation, ensure you have the following dependencies:
