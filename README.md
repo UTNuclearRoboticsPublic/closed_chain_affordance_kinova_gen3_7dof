@@ -15,7 +15,7 @@ Before installation, ensure you have the following dependencies:
 
 - [CCA Libraries](https://github.com/UTNuclearRoboticsPublic/closed_chain_affordance.git)
 - [CCA ROS Interface](https://github.com/UTNuclearRoboticsPublic/closed_chain_affordance_ros.git)
-- [ros2_kortex](https://github.com/Kinovarobotics/ros2_kortex): For robot description and optional simulator
+- [ros2_kortex](https://github.com/Kinovarobotics/ros2_kortex): For robot description and optional simulator. As of right now, it seems they have bugs in their binaries so, we recommend building the `humble` branch from source, which we have tested to work.
 
 ## Installation
 
