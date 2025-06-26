@@ -19,7 +19,7 @@ Before installation, ensure you have the following dependencies:
 
 ## Installation
 
-1. Navigate to your ROS2 workspace and clone the repository:
+1. Navigate to your ROS2 workspace `src` folder and clone the repository:
    ```bash
    cd ~/<ros2_ws_name>/src
    git clone -b main git@github.com:UTNuclearRoboticsPublic/closed_chain_affordance_kinova_gen3_7dof.git
@@ -28,7 +28,7 @@ Before installation, ensure you have the following dependencies:
 2. Build the package and source the workspace:
    ```bash
    cd ~/<ros2_ws_name>
-   colcon build --packages-select cca_kinova_gen3_7dof
+   colcon build --packages-select cca_kinova_gen3_7dof --cmake-args -DCMAKE_BUILD_TYPE=Release
    source install/setup.bash
    ```
 
@@ -51,8 +51,9 @@ Before installation, ensure you have the following dependencies:
    ```bash
    ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_action_server.launch.py
    ```
+   At this point, you should be able to interactively plan and execute trajectories using the Rviz plugin. 
 
-3. For programmatic task definition, launch the CCA planner which will plan for the tasks defined in `src/cca_kinova_gen3_7dof_node.cpp`:
+3. Alternatively, for programmatic task definition, launch the CCA planner which will plan for the tasks defined in `src/cca_kinova_gen3_7dof_node.cpp`:
    ```bash
    ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof.launch.py
    ```
@@ -74,8 +75,9 @@ Before installation, ensure you have the following dependencies:
    ```bash
    ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_action_server.launch.py
    ```
+   At this point, you should be able to interactively plan and execute trajectories using the Rviz plugin. 
 
-3. Run the CCA planner demo which will plan for the tasks defined in `src/demo/cca_kinova_gen3_7dof_demo.cpp`:
+3. Alternatively, run the CCA planner demo which will plan for the tasks defined in `src/demo/cca_kinova_gen3_7dof_demo.cpp`:
    ```bash
    ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_demo.launch.py
    ```
