@@ -2,19 +2,19 @@
 Author: Crasun Jans
 
 Description:
-This launch script launches the  node with the robot's visualization-related parameters along with the URDF and SRDF data passed as robot_description and robot_description_semantic parameters respectively. It also launches RViz with a predefined configuration file for visualizing the robot.
+This launch script launches the `cca_ros_viz` node with the robot's visualization-related parameters along with the URDF and SRDF data passed as robot_description and robot_description_semantic parameters respectively. It also launches RViz with a predefined configuration file for visualizing the robot.
 
 ### Overview:
 The script generates three key parameters:
-1. : Contains the robot's URDF, defining its physical structure, sensors, and actuators.
-2. : Contains the robot's SRDF, defining its semantic properties, such as joint groups and kinematics for motion planning.
-3. : Contains parameters such as joint_states_topic, planning_group, etc. specified in the cca_<robot>_ros_viz_setup.yaml file in the cca_<robot> package.
+1. `robot_description`: Contains the robot's URDF, defining its physical structure, sensors, and actuators.
+2. `robot_description_semantic`: Contains the robot's SRDF, defining its semantic properties, such as joint groups and kinematics for motion planning.
+3. `cca_ros_viz_setup_params`: Contains parameters such as joint_states_topic, planning_group, etc. specified in the cca_<robot>_ros_viz_setup.yaml file in the cca_<robot> package.
 
 ### Customization:
 To adapt this script for a different robot, modify only the following functions:
-- : Adjust how the URDF content is extracted for your robot.
-- : Update this function to provide the correct SRDF file for the robot.
-- : Update this function to provide the correct path info to the cca_<robot>_ros_viz_setup.yaml file.
+- `generate_robot_description_content()`: Adjust how the URDF content is extracted for your robot.
+- `generate_robot_description_semantic_content()`: Update this function to provide the correct SRDF file for the robot.
+- `extract_cca_ros_viz_setup_params()`: Update this function to provide the correct path info to the cca_<robot>_ros_viz_setup.yaml file.
 """
 import os
 
@@ -37,7 +37,6 @@ def generate_robot_description_content():
         - robot_description_content: The robot description generated from the xacro file.
         - launch_args: Launch arguments needed to extract the robot description.
     """
-
     launch_args = [
         DeclareLaunchArgument(
             "robot_type",
@@ -84,6 +83,7 @@ def generate_robot_description_content():
             " ",
         ]
     )
+
     return robot_description_content, launch_args
 
 
@@ -111,7 +111,6 @@ def generate_robot_description_semantic_content():
 
     return robot_description_semantic_content
 
-
 def extract_cca_ros_viz_setup_params():
     """
     Extracts cca-visualization-related parameters for the robot from the specified yaml file
@@ -127,7 +126,6 @@ def extract_cca_ros_viz_setup_params():
     )
 
     return cca_ros_viz_setup_params
-
 
 def generate_launch_description():
     """
