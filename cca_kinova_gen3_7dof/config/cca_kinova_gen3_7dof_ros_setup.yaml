@@ -10,3 +10,6 @@ cc_affordance_planner_ros:
 
     # --- Topics ---
     cca_joint_states_topic: "/joint_states" # Joint states topic name
+
+    # --- How to build the robot - from yaml or urdf ---
+    cca_build_robot_from: "yaml"

@@ -16,6 +16,7 @@
 #include <cc_affordance_planner/cc_affordance_planner_interface.hpp>
 #include <cca_ros/cca_ros.hpp>
 #include <chrono>
+#include <thread>
 
 class CcaRobot : public cca_ros::CcaRos
 {
@@ -266,7 +267,7 @@ int main(int argc, char **argv)
     RCLCPP_INFO(node->get_logger(), "CCA Planner is active");
 
     // Spin the node so joint states can be read
-    std::thread spinner_thread([node]() { rclcpp::spin(node); });
+    std::jthread spinner_thread([node]() { rclcpp::spin(node); });
 
     /// REQUIRED INPUT: Task description. For demo purposes, here, we plan 11 different tasks at once that showcase
     /// various features of the planning framework. For practical purposes, although you can use this approach to plan
@@ -310,12 +311,6 @@ int main(int argc, char **argv)
     {
         RCLCPP_ERROR(node->get_logger(), "CCA action failed");
         rclcpp::shutdown();
-    }
-
-    // TODO: Replace the spinner with jthread
-    if (spinner_thread.joinable())
-    {
-        spinner_thread.join();
     }
 
     rclcpp::shutdown();
