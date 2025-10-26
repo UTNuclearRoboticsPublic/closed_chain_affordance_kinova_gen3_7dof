@@ -263,7 +263,6 @@ int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     rclcpp::NodeOptions node_options;
-    node_options.automatically_declare_parameters_from_overrides(true);
     auto node = std::make_shared<CcaRobot>("cca_ros", node_options);
     RCLCPP_INFO(node->get_logger(), "CCA Planner is active");
 
