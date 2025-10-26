@@ -1,3 +1,14 @@
+/*************************************/
+// Author: Crasun Jans
+// Description:
+// This node enables users to plan, visualize, and execute robot joint trajectories for specified tasks. The planning
+// process utilizes the Closed-chain Affordance model, as described in the paper:
+// "A closed-chain approach to generating affordance joint trajectories for robotic manipulators."
+//
+// Usage Instructions:
+// 1. The framework requires only two inputs: planner configuration and task description. See repo README.md Task
+// Examples section for task-description examples.
+/*************************************/
 #include "rclcpp/rclcpp.hpp"
 #include <Eigen/Core>
 #include <affordance_util/affordance_util.hpp>
@@ -18,16 +29,18 @@ class CcaRobot : public cca_ros::CcaRos
     // Function to run the planner for a given task and/or execute that task on the robot
     bool run(const cca_ros::PlanningRequest &planning_request)
     {
-        motion_status_ = planning_request.status;
 
-        return this->plan_visualize_and_execute(planning_request);
+	cca_ros::PlanningResponse response = this->plan(planning_request);
+        motion_status_ = response.status;
+	return response.result.success;
     }
     // Function overload to plan multiple tasks at once
-    bool run(const cca_ros::PlanningRequests &planning_requests)
+    bool run(const std::vector<cca_ros::PlanningRequest> &planning_requests)
     {
-        motion_status_ = planning_requests.status;
 
-        return this->plan_visualize_and_execute(planning_requests);
+	cca_ros::PlanningResponse response = this->plan(planning_requests);
+        motion_status_ = response.status;
+	return response.result.success;
     }
 
     // Function to block until the robot completes the planned trajectory
@@ -59,14 +72,12 @@ class CcaRobot : public cca_ros::CcaRos
 
   private:
     std::shared_ptr<cca_ros::Status> motion_status_;
-    bool includes_gripper_goal_ = false;
 };
 
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     rclcpp::NodeOptions node_options;
-    node_options.automatically_declare_parameters_from_overrides(true);
     auto node = std::make_shared<CcaRobot>("cca_ros", node_options);
 
     RCLCPP_INFO(node->get_logger(), "CCA Planner is active");
