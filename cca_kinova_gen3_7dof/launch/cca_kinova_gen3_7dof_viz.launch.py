@@ -74,7 +74,7 @@ def generate_launch_description():
         srdf_path=settings["srdf_path"],
         all_launch_args=robot_args,
         srdf_arg_usage=settings["srdf_arg_usage"],
-        srdf_subset_args=settings["srdf_subset_args"],
+        srdf_subset_args=settings.get("srdf_subset_args"),
     )
 
     # Get CCA validation and visualization setup parameters

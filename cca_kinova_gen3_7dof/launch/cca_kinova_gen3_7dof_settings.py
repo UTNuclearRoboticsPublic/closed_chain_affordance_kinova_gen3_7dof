@@ -19,6 +19,7 @@ need modification.
 """
 
 import os
+from typing import Dict, List, Optional
 
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import DeclareLaunchArgument
@@ -161,7 +162,7 @@ def define_robot_paths_and_settings():
 # GENERIC FUNCTIONS (Should work for any robot - rarely needs modification)
 # ---------------------------------------------------------------------------
 def generate_robot_description_content(
-    package_name: str, urdf_rel_path: str, launch_args: list
+    package_name: str, urdf_rel_path: str, launch_args: Dict[str, List[DeclareLaunchArgument]]
 ):
     """Generate the robot_description parameter content.
 
@@ -219,9 +220,9 @@ def generate_robot_description_content(
 def generate_robot_description_semantic_content(
     package_name: str,
     srdf_path: str,
-    all_launch_args: list,
+    all_launch_args: List[DeclareLaunchArgument],
     srdf_arg_usage: str,
-    srdf_subset_args: list,
+    srdf_subset_args: Optional[List[str]] = None
 ):
     """Generate the robot_description_semantic parameter content.
 
