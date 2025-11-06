@@ -1,6 +1,6 @@
 # *** ROS-related attributes pertaining to kinova_gen3_7dof *** #
 
-cc_affordance_planner_ros:
+/**: # to enable parameter usage across different nodes
   ros__parameters:
     # --- Robot Name ---
     cca_robot: "kinova_gen3_7dof" # This package must be named cca_<cca_robot>
