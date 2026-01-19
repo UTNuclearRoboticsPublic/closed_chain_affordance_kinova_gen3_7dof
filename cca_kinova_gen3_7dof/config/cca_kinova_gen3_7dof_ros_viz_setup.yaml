@@ -13,6 +13,7 @@
 
     tool_frame: "cca_tool_frame" # Name of the CCA tool frame
 
-    ee_to_tool_offset: [0.0, 0.0, 0.112] # Location of the tool in the EE frame
+    # ee_to_tool_offset: [0.0, 0.0, 0.112] # Location of the tool in the EE frame
+    ee_to_tool_offset: [0.0, 0.0, 0.0] # Location of the tool in the EE frame
 
     rviz_fixed_frame: "base_link" # Base frame from the urdf
