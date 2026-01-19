@@ -45,7 +45,7 @@ Before installation, ensure you have the following dependencies:
 
 2. Launch the CCA visualizer with interactive RVIZ plugin:
    ```bash
-   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_viz.launch.py
+   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_val_and_viz.launch.py
    ```
    This launches both the visualizer and an interactive RVIZ plugin for code-free planning and execution. To plan and execute trajectories using the RViz plugin, start the following action server:
    ```bash
@@ -69,7 +69,7 @@ Before installation, ensure you have the following dependencies:
 
 2. Launch the CCA visualizer with interactive RVIZ plugin:
    ```bash
-   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_viz.launch.py
+   ros2 launch cca_kinova_gen3_7dof cca_kinova_gen3_7dof_val_and_viz.launch.py
    ```
    This launches both the visualizer and an interactive RVIZ plugin for code-free planning and execution. To plan and execute trajectories using the RViz plugin, start the following action server:
    ```bash
