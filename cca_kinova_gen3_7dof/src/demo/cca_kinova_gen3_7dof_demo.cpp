@@ -95,6 +95,7 @@ cca_ros::PlanningRequest get_demo_description(const DemoMotion &demo_motion)
 {
     // Default planner info
     cca_ros::PlanningRequest req;
+    req.planning_group = "manipulator";
 
     // The following demo motions happen in order. Read the headline comment for each demo motion to understand what
     // that task does.

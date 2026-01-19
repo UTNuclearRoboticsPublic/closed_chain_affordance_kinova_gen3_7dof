@@ -80,8 +80,6 @@ int main(int argc, char **argv)
     rclcpp::NodeOptions node_options;
     auto node = std::make_shared<CcaRobot>("cca_ros", node_options);
 
-    RCLCPP_INFO(node->get_logger(), "CCA Planner is active");
-
     // Spin the node so joint states can be read
     std::jthread spinner_thread([node]() { rclcpp::spin(node); });
 
@@ -92,31 +90,31 @@ int main(int argc, char **argv)
     /// joint trajectory.
     ///------------------------------------------------------------------///
     cca_ros::PlanningRequest req;
+    req.planning_group = "manipulator";
 
+    // Task description
     // Specify planning type
     req.task_description = cc_affordance_planner::TaskDescription(cc_affordance_planner::PlanningType::AFFORDANCE);
-
     // Affordance info
     req.task_description.affordance_info.type = affordance_util::ScrewType::TRANSLATION;
-    req.task_description.affordance_info.axis = Eigen::Vector3d(0, 0, 1);
-    req.task_description.affordance_info.location = Eigen::Vector3d::Zero();
-
-    // Goals
-    req.task_description.goal.affordance = 0.1; // Set desired goal for the affordance
-
-    ///------------------------------------------------------------------///
+    req.task_description.affordance_info.axis = affordance_util::axis_to_vec(affordance_util::Axis::Z);
+    req.task_description.affordance_info.location = affordance_util::axis_to_vec(affordance_util::Axis::ORIGIN);
+    // Goal
+    req.task_description.goal.affordance = 0.1; // 10cm
 
     // Run CCA planner and executor
     if (node->run(req))
     {
-        RCLCPP_INFO(node->get_logger(), "Successfully called CCA action");
+        RCLCPP_INFO(node->get_logger(), "Successfully executed %s tasks", req.planning_group.c_str());
         node->block_until_trajectory_execution(); // Optionally, block until execution
+
     }
     else
     {
-        RCLCPP_ERROR(node->get_logger(), "CCA action failed");
-        rclcpp::shutdown();
+        RCLCPP_ERROR(node->get_logger(), "CCA action failed for the %s group", req.planning_group.c_str());
     }
+
+    ///------------------------------------------------------------------///
 
     rclcpp::shutdown();
     return 0;

@@ -66,8 +66,9 @@ def generate_launch_description():
         launch_args=robot_args,
     )
 
-    # Get CCA ROS setup parameters for the robot
-    cca_robot_setup_params = settings["cca_robot_ros_setup_path"]
+    # Get CCA-relevant robot description and ros setup info for the robot
+    cca_robot_description_params = settings["cca_robot_description_path"]
+    robot_name = settings["cca_robot_package"].removeprefix("cca_")
 
     # Declare debug mode argument
     debug_arg = DeclareLaunchArgument(
@@ -85,7 +86,7 @@ def generate_launch_description():
     # Node parameters
     params = [
         {"robot_description": robot_description},
-        cca_robot_setup_params,
+        cca_robot_description_params,
     ]
 
     return LaunchDescription(
@@ -101,6 +102,9 @@ def generate_launch_description():
                 prefix=[node_prefix],
                 emulate_tty=emulate_tty,
                 parameters=params,
+                remappings=[
+                    ("/cca_ros_val_and_viz", f"/{robot_name}/cca_ros_val_and_viz"),
+                ],
             ),
         ]
     )
