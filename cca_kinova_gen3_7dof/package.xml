@@ -4,7 +4,7 @@
   <name>cca_kinova_gen3_7dof</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="jpanthi@utexas.edu">crasun</maintainer>
+  <maintainer email="jpanthi@utexas.edu">cjans-admin</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

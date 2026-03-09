@@ -1,43 +1,42 @@
-# **Description of the kinova_gen3_7dof robot
-# Define the reference frame, joint axes, their locations, and the tool's position.
-# Add or remove joint fields as needed to accurately represent the robot
-ref_frame:
-  - name: base_link
+# **Kinematic and ROS-Setup Info for the kinova_gen3_7dof robot** #
+/**:
+  ros__parameters:
 
-robot_joints:
-  - name: joint_1
-    w: [0, 0, -1]
-    q: [0, 0, 0.15643]
+    # ----------------------------------------------------------
+    # Core robot parameters
+    # ----------------------------------------------------------
 
-  - name: joint_2
-    w: [0, 1, 0]
-    q: [0, -0.00537, 0.28481]
+    cca_robot: "kinova_gen3_7dof" # Robot name (package typically named cca_<robot>)
+    cca_joint_states_topic: "/joint_states" # Topic to read joint states from
+    rviz_fixed_frame: "base_link" # First frame in the URDF, used for visualization
 
-  - name: joint_3
-    w: [0, 0, -1]
-    q: [0, -0.0118, 0.4952]
+    # List of planning groups that will be loaded
+    cca_planning_groups: ["manipulator"] # Groups representing desired kinematic chains for planning. Match names in MoveIt SRDF.
 
-  - name: joint_4
-    w: [0, 1, 0]
-    q: [0, -0.0182, 0.7056]
+    # ----------------------------------------------------------
+    # Configuration for each planning group
+    # ----------------------------------------------------------
+    cca_planning_group_info:
 
-  - name: joint_5
-    w: [0, 0, -1]
-    q: [0, -0.0246, 0.9140]
+      # -----------------------------
+      # Planning group 1
+      # -----------------------------
+      manipulator: # Must match an entry in cca_planning_groups, arm is just an example
+        ref_frame: "base_link" # Reference frame for this planning group
 
-  - name: joint_6
-    w: [0, 1, 0]
-    q: [0, -0.0246, 1.0199]
+        kinematic_chain:
+          base_joint: "joint_1" # Base joint of the kinematic chain
+          end_joint: "joint_7" # End joint of the kinematic chain
 
-  - name: joint_7
-    w: [0, 0, -1]
-    q: [0, -0.0246, 1.1258]
+        end_effector:
+          frame: "end_effector_link" # End-effector frame
+          gripper_joint_name: "robotiq_85_left_knuckle_joint" # Gripper joint name
 
-end_effector:
-  - gripper_joint_name: robotiq_85_left_knuckle_joint
-    frame_name: end_effector_link
-    q: [0, -0.025, 1.187] # EE location
+        tool:
+          frame: "cca_manipulator_tool" # Tool frame representing robot palm (must NOT exist in URDF)
+          offset_from_ee_frame: [0.0, 0.0, 0.0] # Tool location expressed in EE frame
 
-tool:
-  - name: manual_grasp_link # This is usually at the center of the palm
-    offset_from_ee_frame: [0, 0, 0.112] # Tool location from EE
+        # Action servers for execution (robot OR robot_and_gripper must be specified. OK to leave others blank)
+        robot_as: "/joint_trajectory_controller/follow_joint_trajectory" # To execute Robot-only trajectory
+        gripper_as: "" # To execute Gripper-only trajectory
+        robot_and_gripper_as: "" # Robot and gripper trajectory

@@ -29,16 +29,18 @@ class CcaRobot : public cca_ros::CcaRos
     // Function to run the planner for a given task and/or execute that task on the robot
     bool run(const cca_ros::PlanningRequest &planning_request)
     {
-        motion_status_ = planning_request.status;
 
-        return this->plan_visualize_and_execute(planning_request);
+	cca_ros::PlanningResponse response = this->plan(planning_request);
+        motion_status_ = response.status;
+	return response.result.success;
     }
     // Function overload to plan multiple tasks at once
-    bool run(const cca_ros::PlanningRequests &planning_requests)
+    bool run(const std::vector<cca_ros::PlanningRequest> &planning_requests)
     {
-        motion_status_ = planning_requests.status;
 
-        return this->plan_visualize_and_execute(planning_requests);
+	cca_ros::PlanningResponse response = this->plan(planning_requests);
+        motion_status_ = response.status;
+	return response.result.success;
     }
 
     // Function to block until the robot completes the planned trajectory
@@ -70,7 +72,6 @@ class CcaRobot : public cca_ros::CcaRos
 
   private:
     std::shared_ptr<cca_ros::Status> motion_status_;
-    bool includes_gripper_goal_ = false;
 };
 
 // Demo motions in order
@@ -94,6 +95,7 @@ cca_ros::PlanningRequest get_demo_description(const DemoMotion &demo_motion)
 {
     // Default planner info
     cca_ros::PlanningRequest req;
+    req.planning_group = "manipulator";
 
     // The following demo motions happen in order. Read the headline comment for each demo motion to understand what
     // that task does.
@@ -179,7 +181,7 @@ cca_ros::PlanningRequest get_demo_description(const DemoMotion &demo_motion)
         break;
 
         // Move from the current configuration to a pose along the affordance path,
-        // positioned 90 degrees from the specified reference (grasp) pose.
+        // positioned 90 degrees from the specified reference (canonical) pose.
     case DemoMotion::APPROACH:
         req.task_description = cc_affordance_planner::TaskDescription(cc_affordance_planner::PlanningType::APPROACH);
 
@@ -190,8 +192,8 @@ cca_ros::PlanningRequest get_demo_description(const DemoMotion &demo_motion)
 
         // Goals
         req.task_description.goal.affordance = M_PI / 2.0; // Set desired goal for the affordance
-        req.task_description.goal.grasp_pose = Eigen::Matrix4d::Identity();
-        req.task_description.goal.grasp_pose.block<3, 1>(0, 3) = Eigen::Vector3d(-0.3, -0.3, 0.5);
+        req.task_description.goal.canonical_pose = Eigen::Matrix4d::Identity();
+        req.task_description.goal.canonical_pose.block<3, 1>(0, 3) = Eigen::Vector3d(-0.3, -0.3, 0.5);
         break;
 
         // Do a linear motion along the z axis while constraining the EE yaw to a desired value
@@ -249,7 +251,7 @@ cca_ros::PlanningRequest get_demo_description(const DemoMotion &demo_motion)
             cc_affordance_planner::TaskDescription(cc_affordance_planner::PlanningType::CARTESIAN_GOAL);
 
         // Goal
-        req.task_description.goal.grasp_pose =
+        req.task_description.goal.canonical_pose =
             (Eigen::Matrix4d() << 0.001471, -0.000767, 0.999999, 0.649786, 0.999999, -0.000341, -0.001471, 0.000102,
              0.000343, 1.000000, 0.000767, 0.434399, 0.000000, 0.000000, 0.000000, 1.000000)
                 .finished();
@@ -262,7 +264,6 @@ int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     rclcpp::NodeOptions node_options;
-    node_options.automatically_declare_parameters_from_overrides(true);
     auto node = std::make_shared<CcaRobot>("cca_ros", node_options);
     RCLCPP_INFO(node->get_logger(), "CCA Planner is active");
 
@@ -276,7 +277,7 @@ int main(int argc, char **argv)
     /// as node->run(planner_config, task_description). There is no need to create std::vectors of them
 
     ///------------------------------------------------------------------///
-    cca_ros::PlanningRequests planning_requests;
+    std::vector<cca_ros::PlanningRequest> planning_requests;
 
     const std::vector<DemoMotion> demo_motions = {
         DemoMotion::ROLL_FORWARD, DemoMotion::ROLL_BACKWARD, DemoMotion::PITCH_FORWARD, DemoMotion::PITCH_BACKWARD,
@@ -289,8 +290,7 @@ int main(int argc, char **argv)
     {
 
         const cca_ros::PlanningRequest &req = get_demo_description(demo_motion);
-        planning_requests.planner_config.push_back(req.planner_config);
-        planning_requests.task_description.push_back(req.task_description);
+        planning_requests.push_back(req);
     }
     ///------------------------------------------------------------------///
 
@@ -300,7 +300,7 @@ int main(int argc, char **argv)
     Eigen::VectorXd HOME_CONFIG =
         (Eigen::VectorXd(7) << -3.05874e-06, 0.260055, 3.14312, -2.26992, 1.74023e-06, 0.959945, 1.57006).finished();
     cca_ros::KinematicState start_config;
-    planning_requests.start_state.robot = HOME_CONFIG;
+    planning_requests.front().start_state.robot = HOME_CONFIG;
 
     if (node->run(planning_requests)) ///<-- This is where the planner is called.
     {
